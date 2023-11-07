@@ -8,6 +8,7 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = "bargains"
+import os
 
 SPIDER_MODULES = ["bargains.spiders"]
 NEWSPIDER_MODULE = "bargains.spiders"
@@ -91,3 +92,17 @@ ROBOTSTXT_OBEY = False
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# Get the parent directory of the current project directory
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+PARENT_DIR = os.path.dirname(PROJECT_ROOT)
+
+# FEEDS = {
+#     os.path.join(PARENT_DIR, 'data/frankotrading/', 'output.json'): {
+#         'format': 'json',
+#         'encoding': 'utf8',
+#         'store_empty': False,
+#         'fields': None,
+#         'indent': 4,
+#     },
+# }
