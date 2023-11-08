@@ -1,25 +1,29 @@
 '''
 The 'frankotradingSpider is designed to extract product data from the Franko Trading website.
 It will scrape products by navigating through the categories in the following sequence:
-1. Mobile Phones - to collect information on all mobile phone products.
-2. Computers - to scrape details related to desktops, laptops, and related computing devices.
+1. Computers - to scrape details related to desktops, laptops, and related computing devices. 
+2. Mobile Phones - to collect information on all mobile phone products.
 3. Accessories - to gather data on product accessories such as cases, chargers, and other peripherals.
 4. Appliances - to extract information on home and kitchen appliances.
 5. Printers - to collect details on various types of printers available.
-Additionally, the scraper will also retrieve promotional banners displayed across these categories.
+6 Banners - The advertisements on the homepage
+
 
 To scrap from a category, kindly comment out the rest of the code except the preferred category. Then, run scrapy crawl frankotrading -o <frankotrading_data/filename.json>
 
 '''
 
 import scrapy
+from scrapy.pipelines.images import ImagesPipeline
+from scrapy.exceptions import DropItem
 
 class FrankoTradingSpider(scrapy.Spider):
     name = 'frankotrading'
     allowed_domains = ['frankotrading.com']
 
     def start_requests(self):
-        # The initial URL and headers/cookies setup remains the same
+        # Uncomment the urls for the appropraite product category
+
                 ##### Computers #####
         # url = "https://frankotrading.com/product-category/laptops-desktops/?v=6848ae6f8e78"
                 ####  Phones #####
@@ -27,7 +31,13 @@ class FrankoTradingSpider(scrapy.Spider):
                 #### Accessories #####
         #url = "https://frankotrading.com/product-category/accessories/?v=6848ae6f8e78"
                 #### Appliances #####
-        url = "https://frankotrading.com/product-category/appliances/?v=6848ae6f8e78"
+        #url = "https://frankotrading.com/product-category/appliances/?v=6848ae6f8e78"
+                #### Banners ########
+        #url = "https://frankotrading.com/product-category/appliances/?v=6848ae6f8e78"
+                  ### Printers #######
+        #url = "https://frankotrading.com/product-category/printers/?v=6848ae6f8e78"
+
+
         self.cookies = {
             "__zlcmid": "1IcmEsVswE4IEC5",
             "sucuri_cloudproxy_uuid_ada8ef2a2": "eb7ce14f2e4fa718f19aa0a774751c7a",
@@ -46,6 +56,8 @@ class FrankoTradingSpider(scrapy.Spider):
             "section_data_ids": "%7B%22cart%22%3A1698913496%7D",
             "amp_6e403e": "GrbSqKvpyV0ybbzub0DTx-...1he7i4jaf.1he7i5cl2.0.0.0",
         }
+
+        #uncomment the appropraite referer for the set category
         self.headers = {
             "authority": "frankotrading.com",
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -57,7 +69,8 @@ class FrankoTradingSpider(scrapy.Spider):
             #"referer": "https://frankotrading.com/product-category/laptops-desktops/?v=6848ae6f8e78",
             #"referer": "https://frankotrading.com/product-category/mobile-phones/?v=6848ae6f8e78",
             #"referer": "https://frankotrading.com/product-category/accessories/?v=6848ae6f8e78",
-            "referer": "https://frankotrading.com/product-category/appliances/?v=6848ae6f8e78",
+            #"referer": "https://frankotrading.com/product-category/appliances/?v=6848ae6f8e78",
+            #"referer": "https://frankotrading.com/product-category/printers/?v=6848ae6f8e78",
             "sec-ch-ua": '"Not=A?Brand";v="99", "Chromium";v="118"',
             "sec-ch-ua-mobile": "?0",
             "sec-ch-ua-platform": '"macOS"',
@@ -116,5 +129,33 @@ class FrankoTradingSpider(scrapy.Spider):
         # Now we yield the final product data which includes details and images
         yield product_data
 
-    
 
+
+
+
+
+#### RUN BLOCK --- FOR YOUR BANNERS ONLY ------- #####
+
+# class FrankoTradingImageSpider(scrapy.Spider):
+#     name = 'frankotrading'
+#     allowed_domains = ['frankotrading.com']
+#     start_urls = ['https://frankotrading.com/?v=6848ae6f8e78']
+
+#     def parse(self, response):
+#         # Extract image URLs from 'data-lazyload' attribute in rs-slide elements
+#         image_urls = response.css('rs-slide[data-lazyload]::attr(data-lazyload)').getall()
+#         # Extract image URLs from 'img' tags
+#         image_urls.extend(response.css('img::attr(src)').getall())
+#         # Normalize the URLs and filter out any that are empty strings
+#         image_urls = [response.urljoin(url) for url in image_urls if url.strip()]
+#         # Return the items
+#         return {'image_urls': image_urls}
+
+
+
+
+
+
+###### TO RUN ANY CRAWL #######
+# scrapy crawl {spidername} -o ../data/{spidername}/{category}.json
+# Eg: scrapy crawl frankotrading -o ../data/frankotrading/appliances.json
