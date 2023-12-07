@@ -8,6 +8,7 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = "bargains"
+import os
 
 SPIDER_MODULES = ["bargains.spiders"]
 NEWSPIDER_MODULE = "bargains.spiders"
@@ -17,7 +18,7 @@ NEWSPIDER_MODULE = "bargains.spiders"
 #USER_AGENT = "bargains (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -91,3 +92,34 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# Get the parent directory of the current project directory
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+PARENT_DIR = os.path.dirname(PROJECT_ROOT)
+
+# FEEDS = {
+#     os.path.join(PARENT_DIR, 'data/frankotrading/', 'output.json'): {
+#         'format': 'json',
+#         'encoding': 'utf8',
+#         'store_empty': False,
+#         'fields': None,
+#         'indent': 4,
+#     },
+# }
+# settings.py
+
+#SPLASH_URL = 'http://localhost:8050'
+
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy_splash.SplashCookiesMiddleware': 723,
+#     'scrapy_splash.SplashMiddleware': 725,
+#     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+# }
+
+# SPIDER_MIDDLEWARES = {
+#     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+# }
+
+# DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+
+# HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
