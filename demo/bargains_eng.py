@@ -107,11 +107,11 @@ class Bargains:
 database1_path = "demo/db/db-A.json"
 database2_path = "demo/db/db-B.json"
 bargains_module = Bargains(database1_path, database2_path )
-print(bargains_module.search('HP Pavilion'))
+print(bargains_module.search('Tecno POP'))
 
 
 ## Limitation ##
 
-# There's no user profile to perform collaborative filtering with
+## There's no user profile to perform collaborative filtering with
 # The dataset size is too small for the algorithm
 # Real time price comparison needs microserves that with scheduled runs.abs
