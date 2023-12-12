@@ -17,18 +17,18 @@ def similarity(a, b):
 
 def find_product(data, product_name):
     product_name_lower = product_name.lower()
-    for product in data:
-        if product_name_lower in product['title'].lower():
-            return product
-    return None
+    matching_products = [product for product in data if product_name_lower in product['title'].lower()]
+    if not matching_products:
+        return None
+    # Find the product with the lowest price
+    return min(matching_products, key=lambda p: float(p['price'][1:].replace(',', '')))
 
 def recommend_products(data, base_product, other_database):
     base_text = base_product['title'] + ' ' + ' '.join(base_product.get('details', []))
     recommendations = []
-    other_db_recommendation_added = False
 
-    # First, find recommendations in the same database
-    for product in data:
+    # Adding products from both databases for comparison
+    for product in data + other_database:
         if product == base_product:
             continue
         product_text = product['title'] + ' ' + ' '.join(product.get('details', []))
@@ -36,35 +36,9 @@ def recommend_products(data, base_product, other_database):
         if sim_score >= 0.5:
             recommendations.append((product, sim_score))
 
-    # Then, ensure at least one recommendation from the other database
-    for product in other_database:
-        if product == base_product:
-            continue
-        product_text = product['title'] + ' ' + ' '.join(product.get('details', []))
-        sim_score = similarity(base_text, product_text)
-        if sim_score >= 0.4:
-            recommendations.append((product, sim_score))
-            other_db_recommendation_added = True
-            break
-
-    # If no recommendation from the other database, add the most similar one
-    if not other_db_recommendation_added:
-        max_sim_score = 0
-        most_similar_product = None
-        for product in other_database:
-            if product == base_product:
-                continue
-            product_text = product['title'] + ' ' + ' '.join(product.get('details', []))
-            sim_score = similarity(base_text, product_text)
-            if sim_score > max_sim_score:
-                max_sim_score = sim_score
-                most_similar_product = product
-        if most_similar_product:
-            recommendations.append((most_similar_product, max_sim_score))
-
-    recommendations.sort(key=lambda x: x[1], reverse=True)
+    # Sorting recommendations based on price
+    recommendations.sort(key=lambda p: float(p[0]['price'][1:].replace(',', '')))
     return recommendations
-
 
 class Bargains:
     def __init__(self, database1_path, database2_path):
@@ -87,17 +61,16 @@ class Bargains:
         recommendations = recommend_products(database_used, product, other_database)
 
         # Formatting the output
-        output = f"Product Found:\nTitle: {product['title']}\nPrice: {product.get('price', 'N/A')}\nURL: {product.get('url', 'N/A')}\nPhoto: {product.get('photo', 'N/A')}\n"
+        output = f"Lowest Priced Product Found:\nTitle: {product['title']}\nPrice: {product.get('price', 'N/A')}\nURL: {product.get('url', 'N/A')}\nPhoto: {product.get('photo', 'N/A')}\n"
         if 'details' in product:
             output += "Details:\n" + "\n".join(product['details']) + "\n"
 
-        output += "\nRecommendations:\n"
-        for rec_product, sim_score in recommendations:
-            output += f"Title: {rec_product['title']}\nSimilarity: {sim_score:.2f}\nPrice: {rec_product.get('price', 'N/A')}\nURL: {rec_product.get('url', 'N/A')}\n\n"
+        output += "\nOther Recommendations (Prices and URLs only):\n"
+        for rec_product, _ in recommendations:
+            if rec_product != product: # Exclude the base product
+                output += f"Title: {rec_product['title']}\nPrice: {rec_product.get('price', 'N/A')}\nURL: {rec_product.get('url', 'N/A')}\n\n"
 
         return output
-
-
 
 
 # Example usage
@@ -107,7 +80,7 @@ class Bargains:
 database1_path = "demo/db/db-A.json"
 database2_path = "demo/db/db-B.json"
 bargains_module = Bargains(database1_path, database2_path )
-print(bargains_module.search('Tecno POP'))
+print(bargains_module.search('Tecno pop 8 (BG6) (64gb+3gb)'))
 
 
 ## Limitation ##
